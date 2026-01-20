@@ -1,0 +1,60 @@
+name: Auto-update otdfctl formula
+
+on:
+  # Event-driven: triggered by otdfctl release workflow
+  repository_dispatch:
+    types: [otdfctl-release]
+
+  # Fallback: Daily check for new releases
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+
+  # Manual triggering with optional version override
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Specific version to update to (optional, e.g., 0.28.0)'
+        required: false
+        type: string
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Log trigger source
+        run: |
+          echo "Trigger: ${{ github.event_name }}"
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "Event type: ${{ github.event.action }}"
+            echo "Version from payload: ${{ github.event.client_payload.version }}"
+            echo "Tag from payload: ${{ github.event.client_payload.tag }}"
+          fi
+
+      - name: Checkout tap repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Update formula
+        uses: actions/github-script@v7
+        env:
+          # Priority: dispatch payload > manual input > fetch latest
+          INPUT_VERSION: ${{ github.event.client_payload.version || inputs.version || '' }}
+        with:
+          script: |
+            const { updateOtdfctl } = require('./.github/scripts/dist/update-otdfctl.js');
+            await updateOtdfctl({ github, context, core });

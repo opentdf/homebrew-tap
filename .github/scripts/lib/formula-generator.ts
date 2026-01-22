@@ -48,12 +48,12 @@ export function generateFormula(version: string, tag: string, checksums: Checksu
       "amd64"
     end
 
-    # Binary is in target/ directory with version and platform suffix
-    bin.install "target/otdfctl-#{version}-#{os}-#{arch}" => "otdfctl"
+    # Binary has version and platform suffix (Homebrew extracts into target/ dir)
+    bin.install "otdfctl-#{version}-#{os}-#{arch}" => "otdfctl"
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/otdfctl version")
+    assert_match version.to_s, shell_output("#{bin}/otdfctl --version")
   end
 end
 `;

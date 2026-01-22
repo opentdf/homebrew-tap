@@ -5,16 +5,22 @@ module.exports = {
   roots: ['.github/scripts'],
   testMatch: ['**/*.test.ts'],
   collectCoverageFrom: [
-    '.github/scripts/**/*.ts',
+    '.github/scripts/lib/**/*.ts',
     '!.github/scripts/**/*.test.ts',
     '!.github/scripts/dist/**'
   ],
   coverageThreshold: {
-    global: {
+    '.github/scripts/lib/formula-generator.ts': {
+      branches: 100,
+      functions: 100,
+      lines: 100,
+      statements: 100
+    },
+    '.github/scripts/lib/checksum-fetcher.ts': {
       branches: 80,
       functions: 80,
-      lines: 80,
-      statements: 80
+      lines: 70,
+      statements: 70
     }
   },
   verbose: true

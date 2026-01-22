@@ -40,7 +40,16 @@ export function generateFormula(version: string, tag: string, checksums: Checksu
   end
 
   def install
-    bin.install "otdfctl"
+    # Determine platform suffix matching release naming
+    os = OS.mac? ? "darwin" : "linux"
+    arch = if Hardware::CPU.arm?
+      Hardware::CPU.is_64_bit? ? "arm64" : "arm"
+    else
+      "amd64"
+    end
+
+    # Binary is in target/ directory with version and platform suffix
+    bin.install "target/otdfctl-#{version}-#{os}-#{arch}" => "otdfctl"
   end
 
   test do

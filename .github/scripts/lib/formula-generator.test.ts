@@ -50,7 +50,7 @@ describe('formula-generator', () => {
       const formula = generateFormula('0.28.0', 'v0.28.0', mockChecksums);
 
       expect(formula).toContain('def install');
-      expect(formula).toContain('bin.install "otdfctl-#{version}-#{os}-#{arch}" => "otdfctl"');
+      expect(formula).toContain('bin.install "target/otdfctl-#{version}-#{os}-#{arch}" => "otdfctl"');
       expect(formula).toContain('test do');
       expect(formula).toContain('assert_match version.to_s, shell_output("#{bin}/otdfctl --version")');
     });

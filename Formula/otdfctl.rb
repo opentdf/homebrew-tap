@@ -38,8 +38,8 @@ class Otdfctl < Formula
       "amd64"
     end
 
-    # Binary has version and platform suffix (Homebrew extracts into target/ dir)
-    bin.install "otdfctl-#{version}-#{os}-#{arch}" => "otdfctl"
+    # Binary is inside target/ directory within the tarball
+    bin.install "target/otdfctl-#{version}-#{os}-#{arch}" => "otdfctl"
   end
 
   test do
